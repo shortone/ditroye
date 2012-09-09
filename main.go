@@ -46,10 +46,10 @@ func retrieveHeroProfile(w http.ResponseWriter, req *http.Request) {
 func main() {
 	m := pat.New()
 
-	m.Get("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	m.Get("/app/", http.StripPrefix("/app/", http.FileServer(http.Dir("./app/"))))
 
-	m.Get("/profile/:battleTag/", http.HandlerFunc(retrievePlayerProfile))
-	m.Get("/profile/:battleTag/hero/:heroId/", http.HandlerFunc(retrieveHeroProfile))
+	m.Get("/resources/profile/:battleTag/", http.HandlerFunc(retrievePlayerProfile))
+	m.Get("/resources/profile/:battleTag/hero/:heroId/", http.HandlerFunc(retrieveHeroProfile))
 
 	http.Handle("/", m)
 	if err := http.ListenAndServe(":3001", nil); err != nil {
