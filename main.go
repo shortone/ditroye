@@ -6,50 +6,66 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"html/template"
 )
 
-func retrievePlayerProfile(w http.ResponseWriter, req *http.Request) {
-	battleTag := req.URL.Query().Get(":battleTag")
+type Profile struct {
+	Player PlayerProfile
+	Heroes []HeroProfile
+}
 
-	playerProfile, err := GetPlayerProfile("eu", battleTag)
-	if err != nil {
-		http.Error(w, "Unable to retrieve player profile", 500)
-		return
-	}
+var homePage = template.Must(template.ParseFiles(
+	"templates/_base.html",
+	"templates/index.html",
+))
 
-	w.Header().Set("Content-type", "application/json")
-	if err = json.NewEncoder(w).Encode(playerProfile); err != nil {
-		http.Error(w, "Unable to build response", 500)
+func home(w http.ResponseWriter, req *http.Request) {
+	battleTag := req.URL.Query().Get("battleTag")
+	if battleTag != "" {
+		profile, err := GetPlayerProfile("eu", battleTag)
+		if err != nil {
+			http.Error(w, "Unable to retrieve player profile", 404)
+			return
+		}
+		if err := homePage.Execute(w, profile); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else {
+		if err := homePage.Execute(w, nil); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 }
 
-func retrieveHeroProfile(w http.ResponseWriter, req *http.Request) {
-	battleTag := req.URL.Query().Get(":battleTag")
-	heroId, err := strconv.Atoi(req.URL.Query().Get(":heroId"))
+func hero(w http.ResponseWriter, req *http.Request) {
+	battleTag := req.URL.Query().Get("battleTag")
+	heroId, err := strconv.Atoi(req.URL.Query().Get("heroId"))
 	if err != nil {
-		http.Error(w, "Invalid hero id", 500)
-		return
+		log.Print(err)
+		heroId = -1
 	}
 
-	heroProfile, err := GetHeroProfile("eu", battleTag, heroId)
-	if err != nil {
-		http.Error(w, "Unable to retrieve hero profile", 500)
-		return
-	}
-
-	w.Header().Set("Content-type", "application/json")
-	if err = json.NewEncoder(w).Encode(heroProfile); err != nil {
-		http.Error(w, "Unable to build response", 500)
+	if battleTag != "" && heroId != -1 {
+		profile, err := GetHeroProfile("eu", battleTag, heroId)
+		if err != nil {
+			http.Error(w, "Unable to retrieve hero profile", 404)
+			return
+		}
+		w.Header().Set("Content-type", "application/json")
+		if err = json.NewEncoder(w).Encode(profile); err != nil {
+			http.Error(w, "Unable to build response", 500)
+		}
+	} else {
+		http.Redirect(w, req, "/", 301)
 	}
 }
 
 func main() {
 	m := pat.New()
 
+	m.Get("/", http.HandlerFunc(home))
+	m.Get("/hero", http.HandlerFunc(hero))
 	m.Get("/app/", http.StripPrefix("/app/", http.FileServer(http.Dir("./app/"))))
-
-	m.Get("/resources/profile/:battleTag/", http.HandlerFunc(retrievePlayerProfile))
-	m.Get("/resources/profile/:battleTag/hero/:heroId/", http.HandlerFunc(retrieveHeroProfile))
 
 	http.Handle("/", m)
 	if err := http.ListenAndServe(":3001", nil); err != nil {

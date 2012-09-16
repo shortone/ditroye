@@ -1,0 +1,16 @@
+{{ define "title" }} Ditroye {{ end }}
+
+{{ define "battleTag" }}{{ .BattleTag }}{{ end }}
+
+{{ define "content" }}
+	<form action="/" method="GET">
+		<input type="text" name="battleTag" />
+		<input type="submit" value="search" />
+	</form>
+	<h1>{{ .BattleTag }}</h1>
+	{{ range .Heroes }}
+	<div>
+		<h4><a href='/player/{{ template "battleTag" }}/hero/{{ .Id }}'>{{ .Name }}</a></h4>
+	</div>
+	{{ end }}
+{{ end }}

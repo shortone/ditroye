@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"log"
 )
 
 type Artisan struct {
@@ -20,13 +21,13 @@ type PlayerProfile struct {
 		Id           int
 		Level        int
 		Hardcore     bool
-		ParagonLevel float64
+		ParagonLevel int
 		Gender       int
 		Dead         bool
 		Class        string
 		LastUpdated  int `json:"last-updated"`
 	}
-	LastHeroePlayed  int
+	LastHeroPlayed   int
 	LastUpdated      int
 	Artisans         []Artisan
 	HardcoreArtisans []Artisan
@@ -60,5 +61,6 @@ func GetPlayerProfile(zone string, battleTag string) (*PlayerProfile, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Print(profile)
 	return profile, nil
 }
