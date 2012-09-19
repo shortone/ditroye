@@ -1,16 +1,19 @@
 {{ define "title" }} Ditroye {{ end }}
 
-{{ define "battleTag" }}{{ .BattleTag }}{{ end }}
-
 {{ define "content" }}
-	<form action="/" method="GET">
-		<input type="text" name="battleTag" />
-		<input type="submit" value="search" />
-	</form>
-	<h1>{{ .BattleTag }}</h1>
-	{{ range .Heroes }}
-	<div>
-		<h4><a href='/player/{{ template "battleTag" }}/hero/{{ .Id }}'>{{ .Name }}</a></h4>
-	</div>
-	{{ end }}
+<div id="banner">
+	<a href="/">{{ template "title" . }}</a>
+</div>
+<form id="search-form" action="/" method="GET">
+	<input class="text-input" type="text" name="battleTag" value="{{ .BattleTag }}"/>
+	<input class="submit-input" type="submit" value="search" />
+</form>
+<h1>{{ .BattleTag }}</h1>
+<div id="hero-list">
+	<ul>
+		{{ range .Heroes }}
+		<li><a href="/hero?battleTag={{ $.BattleTag }}&heroId={{ .Id }}">{{ .Name }}</a></li>
+		{{ end }}
+	</ul>
+</div>
 {{ end }}

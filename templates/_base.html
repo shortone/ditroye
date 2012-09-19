@@ -2,12 +2,64 @@
 <html lang="en">
 <head>
 	<title>{{ template "title" . }}</title>
+	<style type="text/css">
+	body {
+		text-align: center;
+		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+		font-weight: 300;
+		font-size: 18px;
+	}
+
+	#container {
+		width: 50%;
+		margin: 0 auto;
+		text-align: left;
+	}
+	
+	#banner {
+		text-align: center;
+		font-size: 40px;
+		margin-top: 25px;
+	}
+
+	#search-form {
+		margin: 40px;
+		text-align: center;
+	}
+
+	#search-form .text-input, #search-form .submit-input {
+		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+		font-weight: 300;
+		font-size: 18px;
+		text-align: center;
+	}
+
+	#search-form .text-input {
+		width: 100%;
+	}
+
+	#search-form .submit-input {
+		margin: 10px;
+		width: 30%;
+	}
+
+	#hero-list ul {
+		list-style-type: none;
+		padding-left: 0;
+	}
+	
+	#footer {
+		text-align: center;
+	}
+	</style>
 </head>
 <body>
-	<section id="content">
-		{{ template "content" . }}
-	</section>
-	<footer id="footer">
-		ditroye 2012 @ dictive.ch
-	</footer>
+	<div id="container">
+		<section id="content">
+			{{ template "content" . }}
+		</section>
+		<footer id="footer">
+			ditroye 2012 @ dictive.ch
+		</footer>
+	</container>
 </body>

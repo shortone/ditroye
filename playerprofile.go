@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"log"
+	"strings"
 )
 
 type Artisan struct {
@@ -61,6 +61,7 @@ func GetPlayerProfile(zone string, battleTag string) (*PlayerProfile, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Print(profile)
+	// Post processing of the profile BattleTag
+	profile.BattleTag = strings.Replace(profile.BattleTag, "#", "-", -1)
 	return profile, nil
 }
